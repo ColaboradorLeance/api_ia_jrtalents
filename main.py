@@ -1,52 +1,20 @@
 import os
-import jwt
+from fastapi import FastAPI
+from dotenv import load_dotenv
+from routers.embeddings_router import router as embeddings_router
 
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
-from typing import List, Optional
-
-SECRET_KEY = os.getenv("SECRET_KEY")
+load_dotenv()
 
 app = FastAPI(
     title="JR Talents API",
     version="1.0",
+    description="API para serviços de talentos e geração de embeddings de vagas.",
 )
-
-security = HTTPBearer()
-
-class JobRequest(BaseModel):
-    jobId: str
-    titulo: str
-    descricao: str
-    requisitos: str
-    tipoContrato: str
-    modalidade: str
-    areas: List[str]
-    areasEspecificas: List[str]
-    areasEspecificasOutros: Optional[str] = None
-    habilidadesRequeridas: List[str]
-
-def validateToken(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        usuario_id = payload.get("sub")
-        if not usuario_id:
-            raise HTTPException(status_code=401, detail="Token inválido")
-        return usuario_id
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expirado")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Token inválido")
 
 @app.get("/")
 def home():
-    return {"status": "ok"}
+    return {"status": "ok", "app": app.title, "version": app.version}
 
-@app.post("/embeddings/job")
-def receber_vaga(job: JobRequest, usuario_id: str = Depends(validateToken)):
-    return {
-        "mensagem": f"Vaga recebida com sucesso pelo usuário {usuario_id}",
-        "job": job
-    }
+app.include_router(embeddings_router)
+
+# uvicorn app.api.v1.main:app --reload
