@@ -43,7 +43,7 @@ def validateToken(credentials: HTTPAuthorizationCredentials = Depends(security))
 def home():
     return {"status": "ok"}
 
-@app.post("/jobs/{jobId}")
+@app.post("/embeddings/job")
 def receber_vaga(job: JobRequest, usuario_id: str = Depends(validateToken)):
     return {
         "mensagem": f"Vaga recebida com sucesso pelo usuário {usuario_id}",
