@@ -3,30 +3,26 @@ from domain.schemas import JobRequest
 
 from sentence_transformers import SentenceTransformer, util
 
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('paraphrase-MiniLM-L6-v2')  # leve, rápido
+
 class ExternalMLClient:
-    def __init__(self):
-        self.model = SentenceTransformer('snunlp/KR-SBERT-V40K-klueNLI-augSTS')
+    def generate_embedding(self, job_dict: dict):
+        text = self.job_values_to_text(job_dict)
+        return model.encode(text).tolist()
 
-    def generate_embedding(self, data: Dict[str, Any]) -> List[float]:
-        job_text = self.job_values_to_text(data)
-        if not job_text.strip():
-            raise ValueError("Texto da vaga está vazio. Campos inválidos!")
-        embedding = self.model.encode(job_text)
-        return embedding.tolist()
-
-    def job_values_to_text(self, job_dict: dict) -> str:
+    @staticmethod
+    def job_values_to_text(job_dict: dict) -> str:
         partes = []
         for value in job_dict.values():
-            if value is None:
+            if not value:
                 continue
-
             if isinstance(value, list):
-                partes.append(", ".join(map(str, value)))
+                partes.append(", ".join(value))
             else:
                 partes.append(str(value))
-
         return "\n".join(partes)
-
 
 #
 class EmbeddingsService:
