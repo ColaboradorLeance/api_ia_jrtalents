@@ -1,4 +1,3 @@
-import os
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from routers.embeddings_router import router as embeddings_router
@@ -15,6 +14,5 @@ app = FastAPI(
 def home():
     return {"status": "ok", "app": app.title, "version": app.version}
 
+# Inclui rotas
 app.include_router(embeddings_router)
-
-# uvicorn app.api.v1.main:app --reload

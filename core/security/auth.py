@@ -5,22 +5,16 @@ from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 
-# Carrega variáveis de ambiente
-load_dotenv()
+load_dotenv()  # Carrega variáveis do .env
 
-# Pega a chave secreta
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-# Verificação imediata
 if not SECRET_KEY or SECRET_KEY.strip() == "":
     raise RuntimeError(
         "SECRET_KEY não definida! Defina a variável de ambiente SECRET_KEY no Vercel ou localmente."
     )
 
-# Segurança HTTP Bearer
 security = HTTPBearer()
 
-# Gera token JWT
 def gerar_token(usuario_id: str, exp_horas: int = 1) -> str:
     payload = {
         "sub": usuario_id,
@@ -29,7 +23,6 @@ def gerar_token(usuario_id: str, exp_horas: int = 1) -> str:
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token
 
-# Valida token JWT
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     token = credentials.credentials
     if not token:
