@@ -3,16 +3,14 @@ from domain.schemas import JobRequest
 import os
 import requests
 
-HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/paraphrase-MiniLM-L6-v2"
+HUGGINGFACE_API_URL = "https://router.huggingface.co/hf-inference/pipeline/feature-extraction/sentence-transformers/paraphrase-MiniLM-L6-v2"
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "")
 
 class ExternalMLClient:
     def generate_embedding(self, job_dict: dict) -> List[float]:
         text = self.job_values_to_text(job_dict)
         
-        headers = {}
-        if HUGGINGFACE_TOKEN:
-            headers["Authorization"] = f"Bearer {HUGGINGFACE_TOKEN}"
+        headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
         
         response = requests.post(
             HUGGINGFACE_API_URL,
