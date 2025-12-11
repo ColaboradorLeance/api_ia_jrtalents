@@ -31,13 +31,12 @@ def receber_vaga(
         usuario_id: str = Depends(validateToken),
         service: EmbeddingsService = Depends(get_embeddings_service),
 ):
-    resultado = service.processar_vaga_e_gerar_embedding(
-        job=job_in,
-        usuario_id=usuario_id
-    )
+
+    resultado = service.process_vaga(job=job_in)
 
     return {
         "mensagem": f"Processamento da vaga {resultado['jobId']} iniciado com sucesso.",
-        "jobId": resultado['jobId'],
-        "status": resultado['status']
+         "embedding_descricao": resultado["embedding_descricao"],
+         "embedding_habilidade": resultado["embedding_habilidade"],
+          "embedding_area": resultado["embedding_area"]
     }
