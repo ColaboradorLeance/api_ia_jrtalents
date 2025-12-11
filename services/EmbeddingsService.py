@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List
 from domain.schemas import JobRequest
 import os
 import requests
