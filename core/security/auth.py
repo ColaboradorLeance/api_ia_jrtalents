@@ -32,7 +32,7 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(security)
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         usuario_id = payload.get("sub")
         if not usuario_id:
-            raise HTTPException(status_code=401, detail="Token inválido")
+            raise HTTPException(status_code=401, detail="Token inválido(usuário)")
         return usuario_id
 
     except jwt.ExpiredSignatureError:
