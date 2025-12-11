@@ -9,8 +9,8 @@ class ExternalMLClient:
 
     def generate_embedding(self, data: Dict[str, Any]) -> List[float]:
         job_text = self.job_values_to_text(data)
-        return self.model.encode(job_text).toList()
-
+        embedding = self.model.encode(job_text)
+        return embedding.tolist()
 
     def job_values_to_text(job_dict: dict) -> str:
         partes = []

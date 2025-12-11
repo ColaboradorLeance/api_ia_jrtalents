@@ -13,7 +13,7 @@ def get_ml_client() -> Generator[ExternalMLClient, None, None]:
 
 
 def get_embeddings_service(
-        ml_client: ExternalMLClient = Depends(get_ml_client)) -> EmbeddingsService:
+    ml_client: ExternalMLClient = Depends(get_ml_client)) -> EmbeddingsService:
     service = EmbeddingsService(ml_client=ml_client)
     return service
 
