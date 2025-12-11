@@ -1,13 +1,27 @@
-import jwt
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
+import jwt
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from dotenv import load_dotenv
 
+# Carrega variáveis de ambiente
+load_dotenv()
+
+# Pega a chave secreta
 SECRET_KEY = os.getenv("SECRET_KEY")
+
+# Verificação imediata
+if not SECRET_KEY or SECRET_KEY.strip() == "":
+    raise RuntimeError(
+        "SECRET_KEY não definida! Defina a variável de ambiente SECRET_KEY no Vercel ou localmente."
+    )
+
+# Segurança HTTP Bearer
 security = HTTPBearer()
 
-def gerar_token(usuario_id: str, exp_horas: int = 1):
+# Gera token JWT
+def gerar_token(usuario_id: str, exp_horas: int = 1) -> str:
     payload = {
         "sub": usuario_id,
         "exp": datetime.utcnow() + timedelta(hours=exp_horas)
@@ -15,14 +29,19 @@ def gerar_token(usuario_id: str, exp_horas: int = 1):
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token
 
-def validateToken(credentials: HTTPAuthorizationCredentials = Depends(security)):
+# Valida token JWT
+def validate_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     token = credentials.credentials
+    if not token:
+        raise HTTPException(status_code=401, detail="Token ausente")
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         usuario_id = payload.get("sub")
         if not usuario_id:
             raise HTTPException(status_code=401, detail="Token inválido")
         return usuario_id
+
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expirado")
     except jwt.InvalidTokenError:
