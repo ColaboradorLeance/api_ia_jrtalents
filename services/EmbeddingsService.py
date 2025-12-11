@@ -3,7 +3,7 @@ from domain.schemas import JobRequest
 import os
 import requests
 
-HUGGINGFACE_API_URL = "https://router.huggingface.co/hf-inference/pipeline/feature-extraction/sentence-transformers/paraphrase-MiniLM-L6-v2"
+HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/paraphrase-MiniLM-L6-v2"
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "")
 
 class ExternalMLClient:
