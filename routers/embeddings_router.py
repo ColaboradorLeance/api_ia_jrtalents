@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from typing import Generator
 from domain.schemas import JobRequest
-from core.security.auth import validateToken
+from core.security.auth import validate_token
 from services.EmbeddingsService import EmbeddingsService, ExternalMLClient
 
 def get_ml_client() -> Generator[ExternalMLClient, None, None]:
@@ -10,7 +10,6 @@ def get_ml_client() -> Generator[ExternalMLClient, None, None]:
         yield ml_client
     finally:
         pass
-
 
 def get_embeddings_service(
     ml_client: ExternalMLClient = Depends(get_ml_client)) -> EmbeddingsService:
@@ -28,15 +27,15 @@ router = APIRouter(
 )
 def receber_vaga(
         job_in: JobRequest,
-        usuario_id: str = Depends(validateToken),
+        usuario_id: str = Depends(validate_token),
         service: EmbeddingsService = Depends(get_embeddings_service),
 ):
-
     resultado = service.process_vaga(job=job_in)
 
     return {
         "mensagem": f"Processamento da vaga {resultado['jobId']} iniciado com sucesso.",
-         "embedding_descricao": resultado["embedding_descricao"],
-         "embedding_habilidade": resultado["embedding_habilidade"],
-          "embedding_area": resultado["embedding_area"]
+        "user": usuario_id,
+        "embedding_descricao": resultado["embedding_descricao"],
+        "embedding_habilidade": resultado["embedding_habilidade"],
+        "embedding_area": resultado["embedding_area"]
     }
