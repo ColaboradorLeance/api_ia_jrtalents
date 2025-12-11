@@ -9,6 +9,9 @@ uvicorn = "==0.23.0"
 pyjwt = "==2.8.0"
 python-dotenv = "==1.0.0"
 requests = "==2.31.0"
+huggingface-hub = "*"
+pydantic = "*"
+typing-extensions = "*"
 
 [dev-packages]
 

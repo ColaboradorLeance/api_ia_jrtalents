@@ -1,27 +1,25 @@
-from typing import List, Dict, Any
+from typing import List
+from huggingface_hub import InferenceClient
 from domain.schemas import JobRequest
+from dotenv import load_dotenv
 import os
-import requests
 
-HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/paraphrase-MiniLM-L6-v2"
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "")
+load_dotenv()
+hf_token = os.environ.get("HF_TOKEN")
+
+client = InferenceClient(
+    provider="sambanova",
+    api_key=hf_token,
+)
 
 class ExternalMLClient:
     def generate_embedding(self, job_dict: dict) -> List[float]:
         text = self.job_values_to_text(job_dict)
-        
-        headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
-        
-        response = requests.post(
-            HUGGINGFACE_API_URL,
-            headers=headers,
-            json={"inputs": text, "options": {"wait_for_model": True}}
+        return client.feature_extraction(
+            text,
+            model="intfloat/e5-mistral-7b-instruct",
         )
-        
-        if response.status_code != 200:
-            raise Exception(f"Hugging Face API error: {response.text}")
-        
-        return response.json()
+
 
     @staticmethod
     def job_values_to_text(job_dict: dict) -> str:
