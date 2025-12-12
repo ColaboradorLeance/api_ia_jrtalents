@@ -25,11 +25,11 @@ def gerar_token(usuario_id: str, exp_horas: int = 1) -> str:
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     token = credentials.credentials
-    print("Token recebido no validate_token:", token)
     if not token:
         raise HTTPException(status_code=401, detail="Token ausente")
 
     try:
+        print("SECRET_KEY:", repr(SECRET_KEY))
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         usuario_id = payload.get("sub")
         if not usuario_id:
