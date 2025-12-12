@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from routers.embeddings_router import router as embeddings_router
+from routers.login_router import router as login_router
 
 load_dotenv()
 
@@ -16,3 +17,4 @@ def home():
 
 # Inclui rotas
 app.include_router(embeddings_router)
+app.include_router(login_router)
