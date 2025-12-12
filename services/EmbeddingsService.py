@@ -2,6 +2,7 @@ from typing import List
 from huggingface_hub import InferenceClient
 from domain.schemas import JobRequest
 from dotenv import load_dotenv
+import numpy as np
 import os
 
 load_dotenv()
@@ -15,10 +16,13 @@ client = InferenceClient(
 class ExternalMLClient:
     def generate_embedding(self, job_dict: dict) -> List[float]:
         text = self.job_values_to_text(job_dict)
-        return client.feature_extraction(
+        embedding_vector =  client.feature_extraction(
             text,
             model="intfloat/e5-mistral-7b-instruct",
         )
+        if isinstance(embedding_vector, np.ndarray):
+            embedding_vector = embedding_vector.tolist()
+        return embedding_vector
 
 
     @staticmethod
