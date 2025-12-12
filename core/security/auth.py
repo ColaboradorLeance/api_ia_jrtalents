@@ -29,7 +29,7 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(security)
         raise HTTPException(status_code=401, detail="Token ausente")
 
     try:
-        print("SECRET_KEY:", repr(SECRET_KEY))
+        print(gerar_token("teste"))
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         usuario_id = payload.get("sub")
         if not usuario_id:
