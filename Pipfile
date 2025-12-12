@@ -12,6 +12,7 @@ requests = "==2.31.0"
 huggingface-hub = "*"
 pydantic = "*"
 typing-extensions = "*"
+numpy = "==1.26.4"
 
 [dev-packages]
 
